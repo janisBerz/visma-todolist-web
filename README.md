@@ -2,7 +2,11 @@
 
 ## Git
 
-### basic commands
+Git is an open-source distributed version control system. Meaning you do not need a central server to track the changes made to you project.
+
+![DVCS](https://latesthackingnews.com/wp-content/uploads/2018/06/Distributed-Version-Control-System-Workflow-What-Is-Git-Edureka.png)
+
+### Basic commands
 
 - Clone remote repository
 
