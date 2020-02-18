@@ -55,7 +55,7 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-                "[variables('appInsighstName')]"
+                "[resourceId('Microsoft.Insights/components', variables('appInsighstName'))]"
             ],
             "properties": {
                 "name": "[parameters('webAppName')]",
