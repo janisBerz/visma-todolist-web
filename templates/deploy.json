@@ -15,6 +15,31 @@
                 "description": "description"
             }
         },
+        "sqlAdminUsername": {
+            "type": "string",
+            "defaultValue": "poweruser",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "sqlAdminPassword": {
+            "type": "string",
+            "defaultValue": "[concat(uniqueString(resourceGroup().id),toUpper(uniqueString(subscription().subscriptionId)), '!')]",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "enabledForTemplateDeployment": {
+            "type": "bool",
+            "defaultValue": false,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
+            }
+        },
         "sku": {
             "type": "string",
             "defaultValue": "F1",
@@ -26,7 +51,8 @@
     "variables": {
         "appServicePlanName": "[parameters('webAppName')]",
         "sqlServerName": "[parameters('webAppName')]",
-        "appInsighstName": "[parameters('webAppName')]"
+        "appInsighstName": "[parameters('webAppName')]",
+        "keyVaultName": "[parameters('webAppName')]"
 
     },
     "resources": [
@@ -65,6 +91,10 @@
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                             "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsighstName')), '2015-05-01').InstrumentationKey]"
+                        },
+                        {
+                            "name": "ASPNETCORE_ENVIRONMENT",
+                            "value": "Production"
                         }
                     ],
                     "connectionStrings": [
@@ -82,9 +112,11 @@
             "type": "Microsoft.Sql/servers",
             "apiVersion": "2015-05-01-preview",
             "location": "[resourceGroup().location]",
+            "dependsOn":[
+            ],
             "properties": {
-                "administratorLogin": "poweruser",
-                "administratorLoginPassword": "[concat(uniqueString(resourceGroup().id),toUpper(uniqueString(subscription().subscriptionId)), '!')]"
+                "administratorLogin": "[parameters('sqlAdminUsername')]",
+                "administratorLoginPassword": "[parameters('sqlAdminPassword')]"
             },
             "resources": [
                 {
@@ -131,6 +163,35 @@
             },
             "dependsOn": [
             ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('keyVaultName')]",
+            "apiVersion": "2018-02-14",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+                "sku": {
+                    "name": "Standard",
+                    "family": "A"
+                },
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "bypass": "AzureServices"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('keyVaultName'), '/', 'sqlAdminPassword')]",
+            "apiVersion": "2018-02-14",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ],
+            "properties": {
+                "value": "[concat(uniqueString(resourceGroup().id),toUpper(uniqueString(subscription().subscriptionId)), '!')]"
+            }
         }
     ],
     "outputs": {
