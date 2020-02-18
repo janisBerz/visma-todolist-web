@@ -23,7 +23,7 @@
             }
         },
         "sqlAdminPassword": {
-            "type": "string",
+            "type": "securestring",
             "defaultValue": "[concat(uniqueString(resourceGroup().id),toUpper(uniqueString(subscription().subscriptionId)), '!')]",
             "metadata": {
                 "description": "description"
@@ -100,7 +100,7 @@
                     "connectionStrings": [
                         {
                             "name": "dbConnectionString",
-                            "connectionString": "string",
+                            "connectionString": "[concat('Server=tcp:', variables('sqlServerName'),'.database.windows.net,1433;Initial Catalog=',parameters('sqlDatabaseName'), ';Persist Security Info=False;User ID=', parameters('sqlAdminUsername'), ';Password=', parameters('sqlAdminPassword'), ';Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
                             "type": "SQLAzure"
                         }
                     ]
@@ -113,6 +113,8 @@
             "apiVersion": "2015-05-01-preview",
             "location": "[resourceGroup().location]",
             "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+
             ],
             "properties": {
                 "administratorLogin": "[parameters('sqlAdminUsername')]",
@@ -172,7 +174,8 @@
             "properties": {
                 "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
                 "tenantId": "[subscription().tenantId]",
-                "accessPolicies": [],
+                "accessPolicies": [
+                ],
                 "sku": {
                     "name": "Standard",
                     "family": "A"
