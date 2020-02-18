@@ -64,6 +64,48 @@ dotnet run
 
 You can find the pipeline code in `azure-pipelines.yml` YAML file. This file contains all the necessary steps to build, package and deploy the application and infrastructure. Pipeline schema can be found [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema)
 
+### Example Build and deploy pipeline code
+
+```yaml
+variables:
+  buildConfiguration: 'Release'
+  pool: 'windows-latest'
+  azureSubscriptionName: 'mySubscription'
+  WebAppName: 'my-web-app'
+
+stages:
+- stage: Build
+  jobs:
+  - job:
+    steps:
+
+      - task: DotNetCoreCLI@2
+        displayName: 'DotNet Core build'
+        inputs:
+          command: build
+          projects: '**/*.sln'
+
+- stage: Deployment_Dev
+  jobs:
+  - deployment: deployment_dev
+    displayName: 'Dev'
+    pool:
+      vmImage: '$(pool)'
+    environment: 'dev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Web App'
+            inputs:
+              appType: webApp
+              ConnectedServiceName: '$(azureSubscriptionName)'
+              WebAppName: '$(WebAppName)'
+              package: '$(Pipeline.Workspace)/app/*.zip'
+```
+
 ### Build stage
 
 In the build stage we compile our application, ideally run test and package the application.
