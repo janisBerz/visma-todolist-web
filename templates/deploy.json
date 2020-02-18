@@ -9,9 +9,9 @@
             }
         },
         "sqlDatabaseName": {
-           "type": "string",
-           "defaultValue":"todolist",
-           "metadata": {
+            "type": "string",
+            "defaultValue": "todolist",
+            "metadata": {
                 "description": "description"
             }
         },
@@ -44,7 +44,7 @@
             }
         },
         {
-            "name": "[concat(variables('appServicePlanName'),'/',parameters('webAppName'))]",
+            "name": "[concat(parameters('webAppName'))]",
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "location": "[resourceGroup().location]",
@@ -57,7 +57,17 @@
             ],
             "properties": {
                 "name": "[parameters('webAppName')]",
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "somevalue"
+                        }
+                    ],
+                    "connectionStrings": [
+                    ]
+                }
             }
         },
         {
