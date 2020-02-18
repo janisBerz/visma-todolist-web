@@ -57,10 +57,6 @@ stages:
         deploy:
           steps:
 
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              source: 'current'
-
           - task: AzureResourceGroupDeployment@2
             displayName: 'Provision Web App Dev'
             inputs:
