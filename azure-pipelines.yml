@@ -2,7 +2,7 @@ variables:
   buildConfiguration: 'Release'
   pool: 'ubuntu-latest'
   azureSubscriptionName: 'jb-visual-studio-professional'
-  webAppName: 'jb-todolist-$(Environment.Name)'
+  webAppName: 'jb-todolist-2-$(Environment.Name)'
   resourceGroupName: '$(webAppName)'
 
 stages:
