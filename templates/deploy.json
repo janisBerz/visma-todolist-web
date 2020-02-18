@@ -78,7 +78,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "administratorLogin": "poweruser",
-                "administratorLoginPassword": "[uniqueString(resourceGroup().id)]"
+                "administratorLoginPassword": "[concat(uniqueString(resourceGroup().id),toUpper(uniqueString(subscription().subscriptionId)), '!')]"
             },
             "resources": [
                 {
