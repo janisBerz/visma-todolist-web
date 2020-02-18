@@ -31,17 +31,17 @@ stages:
           projects: '**/*.sln'
           zipAfterPublish: true
 
-      - task: PublishBuildArtifacts@1
+      - task: PublishPipelineArtifact@1
         displayName: 'Publish Artifact: WebApp'
         inputs:
-          PathtoPublish: '$(build.artifactstagingdirectory)'
-          ArtifactName: app
+          targetPath: '$(build.artifactstagingdirectory)'
+          artifactName: 'app'
 
-      - task: PublishBuildArtifacts@1
+      - task: PublishPipelineArtifact@1
         displayName: 'Publish Artifact: Infrastructure'
         inputs:
-          PathtoPublish: 'templates'
-          ArtifactName: 'templates'
+          targetPath: 'templates'
+          artifactName: 'templates'
 
 - stage: Deployment_Dev
   jobs:
