@@ -1,4 +1,5 @@
 variables:
+  buildConfiguration: 'Release'
   myInitials: 'jb' # Lower case initials
   coreInfrastructureName: 'visma-demo-app-$(myInitials)-$(Environment.Name)'
   webAppName: '$(coreInfrastructureName)'
@@ -19,13 +20,12 @@ stages:
         displayName: Build
         inputs:
           projects: '**/*.sln'
-          arguments: '--configuration ${{ parameters.buildConfiguration }} --no-restore'
+          arguments: '--configuration $(buildConfiguration) --no-restore'
 
       - task: DotNetCoreCLI@2
-        condition: and(succeeded(), ne('${{ parameters.webAppName }}', ''))
         displayName: 'DotNet Core Package WebApp'
         inputs:
           command: publish
-          arguments: '--configuration ${{ parameters.buildConfiguration }} --output $(build.artifactstagingdirectory) --no-build'
+          arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-build'
           projects: '**/*.sln'
           zipAfterPublish: true
