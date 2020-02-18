@@ -1,0 +1,120 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanName": {
+            "type": "string",
+            "metadata": {
+                "description": "Base name of the resource such as web app name and app service plan"
+            },
+            "minLength": 2
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "F1",
+            "metadata": {
+                "description": "The SKU of App Service Plan"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources"
+            }
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "type": "Microsoft.Web/serverfarms",
+            "kind": "app",
+            "name": "[parameters('appServicePlanName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+            },
+            "dependsOn": [
+            ],
+            "sku": {
+                "name": "[parameters('sku')]"
+            }
+        },
+        {
+            "name": "webApp1",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/appServicePlan1')]": "Resource",
+                "displayName": "webApp1"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', 'appServicePlan1')]"
+            ],
+            "properties": {
+                "name": "webApp1",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'appServicePlan1')]"
+            }
+        },
+        {
+            "name": "sqlServer1",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "adminUsername",
+                "administratorLoginPassword": "adminPassword"
+            },
+            "resources": [
+                {
+                    "type": "firewallRules",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', 'sqlServer1')]"
+                    ],
+                    "location": "[resourceGroup().location]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "sqlServer1/sqlDatabase1",
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2014-04-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', 'sqlServer1')]"
+            ],
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "edition": "Basic",
+                "maxSizeBytes": "1073741824",
+                "requestedServiceObjectiveName": "Basic"
+            }
+        },
+        {
+            "name": "[variables('appInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "kind": "app",
+            "apiVersion": "2015-05-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                //"[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource"
+            },
+            "properties": {
+                "Application_Type": "web"
+            },
+            "dependsOn": [
+            ]
+        }
+    ],
+    "outputs": {
+        tertyert
+    }
+}
