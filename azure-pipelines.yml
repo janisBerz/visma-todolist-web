@@ -1,6 +1,6 @@
 variables:
   buildConfiguration: 'Release'
-  pool: 'windows-latest'
+  pool: 'ubuntu-latest'
   azureSubscriptionName: 'jb-visual-studio-professional'
   WebAppName: 'my-web-app'
   resourceGroupName: 'my-resource-group'
@@ -20,7 +20,7 @@ stages:
           projects: '**/*.sln'
 
       - task: DotNetCoreCLI@2
-        displayName: Build
+        displayName: 'DotNet Core Build'
         inputs:
           projects: '**/*.sln'
           arguments: '--configuration $(buildConfiguration) --no-restore'
