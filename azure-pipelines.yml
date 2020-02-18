@@ -31,6 +31,18 @@ stages:
           projects: '**/*.sln'
           zipAfterPublish: true
 
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: WebApp'
+        inputs:
+          PathtoPublish: '$(build.artifactstagingdirectory)'
+          ArtifactName: App
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: Infrastructure'
+        inputs:
+          PathtoPublish: 'templates'
+          ArtifactName: 'templates'
+
 - stage: Deployment_Dev
   jobs:
   - deployment: deployment_dev
