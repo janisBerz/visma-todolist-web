@@ -76,8 +76,8 @@
             "apiVersion": "2015-05-01-preview",
             "location": "[resourceGroup().location]",
             "properties": {
-                "administratorLogin": "adminUsername",
-                "administratorLoginPassword": "adminPassword"
+                "administratorLogin": "poweruser",
+                "administratorLoginPassword": "[uniqueString(resourceGroup().id)]"
             },
             "resources": [
                 {
