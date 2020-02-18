@@ -1,7 +1,7 @@
 variables:
   buildConfiguration: 'Release'
   pool: 'windows-latest'
-  azureSubscriptionName: 'mySubscription'
+  azureSubscriptionName: 'jb-visual-studio-professional'
   WebAppName: 'my-web-app'
   resourceGroupName: 'my-resource-group'
 
