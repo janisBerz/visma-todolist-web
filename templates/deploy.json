@@ -172,7 +172,7 @@
             "properties": {
                 "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
                 "tenantId": "[subscription().tenantId]",
-
+                "accessPolicies": [],
                 "sku": {
                     "name": "Standard",
                     "family": "A"
