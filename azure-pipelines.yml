@@ -2,8 +2,8 @@ variables:
   buildConfiguration: 'Release'
   pool: 'ubuntu-latest'
   azureSubscriptionName: 'jb-visual-studio-professional'
-  WebAppName: 'my-web-app'
-  resourceGroupName: 'my-resource-group'
+  webAppName: 'jb-todolist-$(Environment.Name)'
+  resourceGroupName: '$(webAppName)'
 
 stages:
 - stage: Build
