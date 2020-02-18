@@ -26,6 +26,14 @@ stages:
           arguments: '--configuration $(buildConfiguration) --no-restore'
 
       - task: DotNetCoreCLI@2
+        displayName: 'DotNet Core Build'
+        inputs:
+          command: test
+          publishTestResults: true
+          projects: '**/*.sln'
+          arguments: '--configuration $(buildConfiguration) --no-restore'
+
+      - task: DotNetCoreCLI@2
         displayName: 'DotNet Core Package WebApp'
         inputs:
           command: publish
