@@ -1,4 +1,4 @@
-# DevOps and Automation
+# Automation
 
 ## Git
 
@@ -167,3 +167,6 @@ In the build stage we compile our application, ideally run test and package the 
 
 During this stage a new release is created automatically after a successful build. The artifacts that got created in the build stage are passed over to deployment stage and the application is deployed automatically.
 
+## Infrastructure as code
+
+For this exercise we will be using Microsoft Azure public cloud and their Infrastructure as code technology is [Azure Resource Manager](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview).
