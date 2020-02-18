@@ -58,7 +58,7 @@ stages:
           steps:
 
           - task: AzureResourceGroupDeployment@2
-            displayName: 'Provision Web App Dev'
+            displayName: 'Provision Infrastructure'
             inputs:
               azureSubscription: '$(azureSubscriptionName)'
               action: 'Create Or Update Resource Group'
@@ -66,7 +66,7 @@ stages:
               location: 'West Europe'
               csmFile: '$(Pipeline.Workspace)/templates/deploy.json'
               csmParametersFile: '$(Pipeline.Workspace)/templates/deploy.parameters.json'
-              overrideParameters: -WebAppName $(WebAppName)
+              overrideParameters: -webAppName $(WebAppName)
               deploymentMode: Incremental
 
           - task: AzureRmWebAppDeployment@4
