@@ -108,5 +108,5 @@ stages:
 
 ### Build stage
 
-In the build stage we compile our application, ideally run test and package the application.
+In the build stage we compile our application, ideally run test and package the application as an artifact that will get consumed by the pipeline in the deployment stage
 
