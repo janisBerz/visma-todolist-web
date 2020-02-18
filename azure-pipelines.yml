@@ -1,8 +1,5 @@
 variables:
   buildConfiguration: 'Release'
-  myInitials: 'jb' # Lower case initials
-  coreInfrastructureName: 'visma-demo-app-$(myInitials)-$(Environment.Name)'
-  webAppName: '$(coreInfrastructureName)'
 
 stages:
 - stage: Build
