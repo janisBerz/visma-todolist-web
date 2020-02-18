@@ -25,7 +25,8 @@
     },
     "variables": {
         "appServicePlanName": "[parameters('webAppName')]",
-        "sqlServerName": "[parameters('webAppName')]"
+        "sqlServerName": "[parameters('webAppName')]",
+        "appInsighstName": "[parameters('webAppName')]"
 
     },
     "resources": [
@@ -44,7 +45,7 @@
             }
         },
         {
-            "name": "[concat(parameters('webAppName'))]",
+            "name": "[parameters('webAppName')]",
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "location": "[resourceGroup().location]",
@@ -111,13 +112,13 @@
             }
         },
         {
-            "name": "blah",
+            "name": "[variables('appInsighstName')]",
             "type": "Microsoft.Insights/components",
             "kind": "app",
             "apiVersion": "2015-05-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                //"[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource"
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('webAppName'))]": "Resource"
             },
             "properties": {
                 "Application_Type": "web"
