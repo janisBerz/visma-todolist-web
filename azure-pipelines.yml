@@ -2,7 +2,7 @@ variables:
   buildConfiguration: 'Release'
   pool: 'ubuntu-latest'
   azureSubscriptionName: 'jb-visual-studio-professional'
-  webAppName: 'jb-todolist-3-$(Environment.Name)'
+  webAppName: 'jb-todolist-$(Environment.Name)'
   resourceGroupName: '$(webAppName)'
 
 stages:
@@ -26,7 +26,7 @@ stages:
           arguments: '--configuration $(buildConfiguration) --no-restore'
 
       - task: DotNetCoreCLI@2
-        displayName: 'DotNet Core Build'
+        displayName: 'DotNet Core test'
         inputs:
           command: test
           publishTestResults: true

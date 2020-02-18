@@ -1,5 +1,54 @@
 # DevOps and Automation
 
+## Git
+
+### basic commands
+
+- Clone remote repository
+
+  ```bash
+  git clone https://github.com/janisBerz/visma-todolist-web.git
+  ```
+
+- Check local repository's status. It will let you know if you are behind the remote branch and if there modified files that are not staged.
+
+  ```bash
+  git status
+  ```
+
+  Response:
+
+  ```bash
+  Your branch is up to date with 'origin/master'.
+
+        modified:   ../../README.md
+        modified:   ../../azure-pipelines.yml
+  ```
+
+- Stage changed files
+
+  ```bash
+  git add ../../README.md
+  ```
+
+  or
+
+  ```bash
+  git add .
+  ```
+
+- Commit the changes to your local repository
+
+  ```bash
+  git commit -m 'Updated readme file'
+  ```
+
+- Push the changed to remote repository (origin)
+
+  ```bash
+  git push
+  ```
+
 ## .Net Core
 
 Use the below commands to build and run your application from a command line.
@@ -110,8 +159,7 @@ stages:
 
 In the build stage we compile our application, ideally run test and package the application as an artifact that will get consumed by the pipeline in the deployment stage.
 
-#### Run unit test during the build stage
+### Deployment stage
 
-### Release stage
+During this stage a new release is created automatically after a successful build. The artifacts that got created in the build stage are passed over to deployment stage and the application is deployed automatically.
 
-During this stage a new release is created automatically based on the 
