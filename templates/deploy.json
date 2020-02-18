@@ -195,7 +195,7 @@
                 "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
             ],
             "properties": {
-                "value": "[concat(uniqueString(resourceGroup().id),toUpper(uniqueString(subscription().subscriptionId)), '!')]"
+                "value": "[parameters('sqlAdminPassword')]"
             }
         }
     ],
