@@ -83,4 +83,4 @@ stages:
               appType: webApp
               ConnectedServiceName: '$(azureSubscriptionName)'
               WebAppName: '$(WebAppName)'
-              package: '$(Pipeline.Workspace)/app/*.zip'
+              package: '$(Pipeline.Workspace)/App/*.zip'
