@@ -48,7 +48,7 @@ stages:
               azureSubscription: '$(azureSubscriptionName)'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              location: 'Europe West'
+              location: 'West Europe'
               csmFile: 'templates/deploy.json'
               csmParametersFile: 'templates/deploy.parameters.json'
               overrideParameters: -WebAppName $(WebAppName)
