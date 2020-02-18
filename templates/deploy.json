@@ -112,7 +112,7 @@
             "type": "Microsoft.Sql/servers",
             "apiVersion": "2015-05-01-preview",
             "location": "[resourceGroup().location]",
-            "dependsOn":[
+            "dependsOn": [
             ],
             "properties": {
                 "administratorLogin": "[parameters('sqlAdminUsername')]",
@@ -171,6 +171,8 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+                "tenantId": "[subscription().tenantId]",
+
                 "sku": {
                     "name": "Standard",
                     "family": "A"
