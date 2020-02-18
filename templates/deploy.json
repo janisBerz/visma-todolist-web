@@ -54,7 +54,8 @@
                 "displayName": "[parameters('webAppName')]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[variables('appInsighstName')]"
             ],
             "properties": {
                 "name": "[parameters('webAppName')]",
@@ -63,7 +64,7 @@
                     "appSettings": [
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "somevalue"
+                            "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsighstName')), '2015-05-01').InstrumentationKey]"
                         }
                     ],
                     "connectionStrings": [
