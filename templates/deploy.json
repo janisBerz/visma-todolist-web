@@ -2,12 +2,18 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "appServicePlanName": {
+        "webAppName": {
             "type": "string",
             "metadata": {
-                "description": "Base name of the resource such as web app name and app service plan"
-            },
-            "minLength": 2
+                "description": "The name of the Web Application"
+            }
+        },
+        "sqlDatabaseName": {
+           "type": "string",
+           "defaultValue":"todolist",
+           "metadata": {
+                "description": "description"
+            }
         },
         "sku": {
             "type": "string",
@@ -15,24 +21,20 @@
             "metadata": {
                 "description": "The SKU of App Service Plan"
             }
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "Location for all resources"
-            }
         }
     },
     "variables": {
+        "appServicePlanName": "[parameters('webAppName')]",
+        "sqlServerName": "[parameters('webAppName')]"
+
     },
     "resources": [
         {
             "apiVersion": "2018-02-01",
             "type": "Microsoft.Web/serverfarms",
             "kind": "app",
-            "name": "[parameters('appServicePlanName')]",
-            "location": "[parameters('location')]",
+            "name": "[variables('appServicePlanName')]",
+            "location": "[resourceGroup().location]",
             "properties": {
             },
             "dependsOn": [
@@ -42,24 +44,24 @@
             }
         },
         {
-            "name": "webApp1",
+            "name": "[parameters('webAppName')]",
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/appServicePlan1')]": "Resource",
-                "displayName": "webApp1"
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource",
+                "displayName": "[parameters('webAppName')]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', 'appServicePlan1')]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
             ],
             "properties": {
-                "name": "webApp1",
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'appServicePlan1')]"
+                "name": "[parameters('webAppName')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
             }
         },
         {
-            "name": "sqlServer1",
+            "name": "[variables('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
             "apiVersion": "2015-05-01-preview",
             "location": "[resourceGroup().location]",
@@ -72,7 +74,7 @@
                     "type": "firewallRules",
                     "apiVersion": "2015-05-01-preview",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Sql/servers', 'sqlServer1')]"
+                        "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
                     ],
                     "location": "[resourceGroup().location]",
                     "name": "AllowAllWindowsAzureIps",
@@ -84,12 +86,12 @@
             ]
         },
         {
-            "name": "sqlServer1/sqlDatabase1",
+            "name": "[concat(variables('sqlServerName'), parameters('sqlDatabaseName'))]",
             "type": "Microsoft.Sql/servers/databases",
             "apiVersion": "2014-04-01",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', 'sqlServer1')]"
+                "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
             ],
             "properties": {
                 "collation": "SQL_Latin1_General_CP1_CI_AS",
@@ -99,11 +101,11 @@
             }
         },
         {
-            "name": "[variables('appInsightsName')]",
+            "name": "blah",
             "type": "Microsoft.Insights/components",
             "kind": "app",
             "apiVersion": "2015-05-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "tags": {
                 //"[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource"
             },
