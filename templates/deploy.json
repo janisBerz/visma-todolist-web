@@ -68,6 +68,11 @@
                         }
                     ],
                     "connectionStrings": [
+                        {
+                            "name": "dbConnectionString",
+                            "connectionString": "string",
+                            "type": "SQLAzure"
+                        }
                     ]
                 }
             }
