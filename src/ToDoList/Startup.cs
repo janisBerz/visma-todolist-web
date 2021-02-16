@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,14 +23,11 @@ namespace DotNetCoreSqlDb
         {
             services.AddControllersWithViews();
 
-            // The following line enables Application Insights telemetry collection.
-            services.AddApplicationInsightsTelemetry();
-
             // Use SQL Database if in Azure, otherwise, use SQLite
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
             {
                 services.AddDbContext<MyDatabaseContext>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("dbConnectionString")));
+                options.UseSqlServer(Configuration.GetConnectionString("dbConnectionString")));
             }
 
             else
