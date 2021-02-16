@@ -23,6 +23,9 @@ namespace DotNetCoreSqlDb
         {
             services.AddControllersWithViews();
 
+            // The following line enables Application Insights telemetry collection.
+            services.AddApplicationInsightsTelemetry();
+
             // Use SQL Database if in Azure, otherwise, use SQLite
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
             {
@@ -37,7 +40,7 @@ namespace DotNetCoreSqlDb
             }
 
             // Automatically perform database migration
-            services.BuildServiceProvider().GetService<MyDatabaseContext>().Database.Migrate();
+            //services.BuildServiceProvider().GetService<MyDatabaseContext>().Database.Migrate();
 
         }
 
