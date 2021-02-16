@@ -8,6 +8,38 @@
                 "description": "The name of the Web Application"
             }
         },
+        "sqlDatabaseName": {
+            "type": "string",
+            "defaultValue": "todolist",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "sqlAdminUsername": {
+            "type": "string",
+            "defaultValue": "poweruser",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "sqlAdminPassword": {
+            "type": "securestring",
+            "defaultValue": "[concat(uniqueString(resourceGroup().id),toUpper(uniqueString(subscription().subscriptionId)), '!')]",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "enabledForTemplateDeployment": {
+            "type": "bool",
+            "defaultValue": false,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
+            }
+        },
         "sku": {
             "type": "string",
             "defaultValue": "F1",
@@ -17,7 +49,10 @@
         }
     },
     "variables": {
-        "appServicePlanName": "[parameters('webAppName')]"
+        "appServicePlanName": "[parameters('webAppName')]",
+        "sqlServerName": "[parameters('webAppName')]",
+        "appInsighstName": "[parameters('webAppName')]",
+        "keyVaultName": "[parameters('webAppName')]"
     },
     "resources": [
         {
@@ -32,6 +67,134 @@
             ],
             "sku": {
                 "name": "[parameters('sku')]"
+            }
+        },
+        {
+            "name": "[parameters('webAppName')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource",
+                "displayName": "[parameters('webAppName')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Insights/components', variables('appInsighstName'))]"
+            ],
+            "properties": {
+                "name": "[parameters('webAppName')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsighstName')), '2015-05-01').InstrumentationKey]"
+                        },
+                        {
+                            "name": "ASPNETCORE_ENVIRONMENT",
+                            "value": "Production"
+                        }
+                    ],
+                    "connectionStrings": [
+                        {
+                            "name": "dbConnectionString",
+                            "connectionString": "[concat('Server=tcp:', variables('sqlServerName'),'.database.windows.net,1433;Initial Catalog=',parameters('sqlDatabaseName'), ';Persist Security Info=False;User ID=', parameters('sqlAdminUsername'), ';Password=', parameters('sqlAdminPassword'), ';Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+                            "type": "SQLAzure"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[variables('sqlServerName')]",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+
+            ],
+            "properties": {
+                "administratorLogin": "[parameters('sqlAdminUsername')]",
+                "administratorLoginPassword": "[parameters('sqlAdminPassword')]"
+            },
+            "resources": [
+                {
+                    "type": "firewallRules",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+                    ],
+                    "location": "[resourceGroup().location]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "[concat(variables('sqlServerName'), '/', parameters('sqlDatabaseName'))]",
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2014-04-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+            ],
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "edition": "Basic",
+                "maxSizeBytes": "1073741824",
+                "requestedServiceObjectiveName": "Basic"
+            }
+        },
+        {
+            "name": "[variables('appInsighstName')]",
+            "type": "Microsoft.Insights/components",
+            "kind": "app",
+            "apiVersion": "2015-05-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('webAppName'))]": "Resource"
+            },
+            "properties": {
+                "Application_Type": "web"
+            },
+            "dependsOn": [
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('keyVaultName')]",
+            "apiVersion": "2018-02-14",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                ],
+                "sku": {
+                    "name": "Standard",
+                    "family": "A"
+                },
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "bypass": "AzureServices"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('keyVaultName'), '/', 'sqlAdminPassword')]",
+            "apiVersion": "2018-02-14",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ],
+            "properties": {
+                "value": "[parameters('sqlAdminPassword')]"
             }
         }
     ],

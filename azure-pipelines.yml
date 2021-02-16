@@ -24,3 +24,63 @@ stages:
         inputs:
           projects: '**/*.sln'
           arguments: '--configuration $(buildConfiguration) --no-restore'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'DotNet Core test'
+        inputs:
+          command: test
+          publishTestResults: true
+          projects: '**/*.sln'
+          arguments: '--configuration $(buildConfiguration) --no-restore'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'DotNet Core Package WebApp'
+        inputs:
+          command: publish
+          arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-build'
+          projects: '**/*.sln'
+          zipAfterPublish: true
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Artifact: WebApp'
+        inputs:
+          targetPath: '$(build.artifactstagingdirectory)'
+          artifactName: 'app'
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Artifact: Infrastructure'
+        inputs:
+          targetPath: 'templates'
+          artifactName: 'templates'
+
+- stage: Deployment_Dev
+  jobs:
+  - deployment: deployment_dev
+    displayName: 'Dev'
+    pool:
+      vmImage: '$(pool)'
+    environment: 'dev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: AzureResourceGroupDeployment@2
+            displayName: 'Provision Infrastructure'
+            inputs:
+              azureSubscription: '$(azureSubscriptionName)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: 'West Europe'
+              csmFile: '$(Pipeline.Workspace)/templates/deploy.json'
+              csmParametersFile: '$(Pipeline.Workspace)/templates/deploy.parameters.json'
+              overrideParameters: -webAppName $(WebAppName)
+              deploymentMode: Incremental
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Web App'
+            inputs:
+              appType: webApp
+              ConnectedServiceName: '$(azureSubscriptionName)'
+              WebAppName: '$(WebAppName)'
+              package: '$(Pipeline.Workspace)/App/*.zip'
