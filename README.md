@@ -223,3 +223,7 @@ ARM template snippet:
   ]
 }
   ```
+
+## Full app tutorial by MS
+
+[ToDoList](https://docs.microsoft.com/en-gb/azure/app-service/tutorial-dotnetcore-sqldb-app?pivots=platform-windows)
