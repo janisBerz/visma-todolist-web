@@ -59,7 +59,7 @@ Use the below commands to build and run your application from a command line.
 
 ### .Net Core requirements
 
-- [.Net Core 3.1.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+- [.Net Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 - [Entity Framework Core tools](https://docs.microsoft.com/en-us/ef/core/miscellaneous/cli/dotnet)
   - Install tools by running the following command form PowerShell
 
