@@ -1,7 +1,7 @@
 variables:
   initials: 'jb'
   webAppName: '$(initials)-todolist-$(Environment.Name)'
-  resourceGroupName: '$(webAppName)'
+  resourceGroupName: 'we-rg-$(webAppName)'
   buildConfiguration: 'Release'
   pool: 'ubuntu-latest'
   azureSubscriptionName: 'jb-visual-studio-professional'
@@ -83,5 +83,5 @@ stages:
             inputs:
               appType: webApp
               ConnectedServiceName: '$(azureSubscriptionName)'
-              WebAppName: '$(WebAppName)'
+              WebAppName: 'we-web-$(WebAppName)'
               package: '$(Pipeline.Workspace)/app/ToDoList.zip'
