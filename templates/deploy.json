@@ -63,9 +63,6 @@
             "kind": "app",
             "name": "[variables('appServicePlanName')]",
             "location": "[resourceGroup().location]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
             "properties": {
             },
             "dependsOn": [
@@ -79,6 +76,9 @@
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "location": "[resourceGroup().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "tags": {
                 "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource",
                 "displayName": "[variables('webAppName')]"
