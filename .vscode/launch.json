@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/ToDoList/bin/Debug/netcoreapp2.2/ToDoList.dll",
+            "program": "${workspaceFolder}/src/ToDoList/bin/Debug/netcoreapp3.1/ToDoList.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

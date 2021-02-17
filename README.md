@@ -64,7 +64,7 @@ Use the below commands to build and run your application from a command line.
   - Install tools by running the following command form PowerShell
 
     ```powershell
-    dotnet tool install --global dotnet-ef
+    dotnet tool install --global dotnet-ef --version 3.1.0
     ```
 
   - Verify if the EF Core CLI tools are installed
