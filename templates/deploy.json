@@ -49,10 +49,11 @@
         }
     },
     "variables": {
-        "appServicePlanName": "[parameters('webAppName')]",
-        "sqlServerName": "[parameters('webAppName')]",
-        "appInsighstName": "[parameters('webAppName')]",
-        "keyVaultName": "[parameters('webAppName')]"
+        "region": "we",
+        "appServicePlanName": "[concat(variables('region'),'-','aps','-', parameters('webAppName'))]",
+        "sqlServerName": "[concat(variables('region'),'-','sql','-', parameters('webAppName'))]",
+        "appInsighstName": "[concat(variables('region'),'-','ai','-', parameters('webAppName'))]",
+        "keyVaultName": "[concat(variables('region'),'-','kv','-', parameters('webAppName'))]"
     },
     "resources": [
         {
@@ -99,7 +100,7 @@
                     "connectionStrings": [
                         {
                             "name": "dbConnectionString",
-                            "connectionString": "[concat('Server=tcp:', variables('sqlServerName'),'.database.windows.net,1433;Initial Catalog=',parameters('sqlDatabaseName'), ';Persist Security Info=False;User ID=', parameters('sqlAdminUsername'), ';Password=', parameters('sqlAdminPassword'), ';Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+                            "connectionString": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/dbConnectionString)',variables('keyVaultName'))]",
                             "type": "SQLAzure"
                         }
                     ]
@@ -187,14 +188,14 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[concat(variables('keyVaultName'), '/', 'sqlAdminPassword')]",
+            "name": "[concat(variables('keyVaultName'), '/', 'dbConnectionString')]",
             "apiVersion": "2018-02-14",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
             ],
             "properties": {
-                "value": "[parameters('sqlAdminPassword')]"
+                "value": "[concat('Server=tcp:', variables('sqlServerName'),'.database.windows.net,1433;Initial Catalog=',parameters('sqlDatabaseName'), ';Persist Security Info=False;User ID=', parameters('sqlAdminUsername'), ';Password=', parameters('sqlAdminPassword'), ';Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
             }
         }
     ],
