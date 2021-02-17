@@ -51,6 +51,7 @@
     "variables": {
         "region": "we",
         "appServicePlanName": "[concat(variables('region'),'-','aps','-', parameters('webAppName'))]",
+        "webAppName": "[concat(variables('region'),'-','web','-', parameters('webAppName'))]",
         "sqlServerName": "[concat(variables('region'),'-','sql','-', parameters('webAppName'))]",
         "appInsighstName": "[concat(variables('region'),'-','ai','-', parameters('webAppName'))]",
         "keyVaultName": "[concat(variables('region'),'-','kv','-', parameters('webAppName'))]"
@@ -62,6 +63,9 @@
             "kind": "app",
             "name": "[variables('appServicePlanName')]",
             "location": "[resourceGroup().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
             },
             "dependsOn": [
@@ -71,20 +75,20 @@
             }
         },
         {
-            "name": "[parameters('webAppName')]",
+            "name": "[variables('webAppName')]",
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "location": "[resourceGroup().location]",
             "tags": {
                 "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]": "Resource",
-                "displayName": "[parameters('webAppName')]"
+                "displayName": "[variables('webAppName')]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
                 "[resourceId('Microsoft.Insights/components', variables('appInsighstName'))]"
             ],
             "properties": {
-                "name": "[parameters('webAppName')]",
+                "name": "[variables('webAppName')]",
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
                 "siteConfig": {
                     "appSettings": [
@@ -158,7 +162,7 @@
             "apiVersion": "2015-05-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('webAppName'))]": "Resource"
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webAppName'))]": "Resource"
             },
             "properties": {
                 "Application_Type": "web"
@@ -184,6 +188,25 @@
                     "defaultAction": "Allow",
                     "bypass": "AzureServices"
                 }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/accessPolicies",
+            "name": "[concat(variables('keyVaultName'), '/add')]",
+            "apiVersion": "2019-09-01",
+            "properties": {
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2018-02-01', 'Full').identity.principalId]",
+                        "permissions": {
+                            "secrets": [
+                                "get",
+                                "list"
+                            ]
+                        }
+                    }
+                ]
             }
         },
         {

@@ -1,5 +1,6 @@
 variables:
-  webAppName: 'jb-todolist-$(Environment.Name)'
+  initials: 'jb'
+  webAppName: '$(initials)-todolist-$(Environment.Name)'
   resourceGroupName: '$(webAppName)'
   buildConfiguration: 'Release'
   pool: 'ubuntu-latest'
