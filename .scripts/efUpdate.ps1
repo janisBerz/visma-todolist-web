@@ -5,7 +5,7 @@ dotnet ef migrations add InitialCreate
 
 # Set connection string to production database
 # PowerShell
-$env:ConnectionStrings:MyDbConnection="<connectionString>"
+$env:ConnectionStrings:dbConnectionString="<dbConnectionString>"
 
 # Run migrations
 dotnet ef database update
